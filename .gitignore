@@ -8,3 +8,5 @@ data
 .DS_Store
 # duplicate download of brand/
 brand 2/
+# unzipped copies of the X kit, not part of the project
+x-page-kit/

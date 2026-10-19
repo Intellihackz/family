@@ -1,6 +1,6 @@
 # family on pons
 
-A Chrome extension that adds a holder-only chat room to every token page on the [ponsfamily](https://ponsfamily.com) launchpad. If you hold the token you are in the room. If you do not, you see that it is locked and how many holders are inside.
+A Chrome extension that adds a community chat to every token page on the [ponsfamily](https://ponsfamily.com) launchpad. Hold the token and you are in. If you are not yet, you see how many members are already talking.
 
 Independent community project, not affiliated with pons.
 

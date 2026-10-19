@@ -16,14 +16,14 @@
 
 ### Bio (pick one, all under 160 characters)
 
-**A** (125)
-> Holder-only chat on every token page. Hold it, you're in the room. Alpha for pons. Community built, not affiliated with pons.
+**A** (137)
+> The community chat on every token page. Hold the token, join the conversation. Alpha for pons. Community built, not affiliated with pons.
 
-**B** (126)
-> Every token has a room. Only holders get in. A Chrome extension for pons, in alpha. Community built, not affiliated with pons.
+**B** (125)
+> Every token has a community. Join the chat. A Chrome extension for pons, in alpha. Community built, not affiliated with pons.
 
-**C** (119)
-> The room for people who actually hold. Open any token on pons and talk to its holders. Alpha. Not affiliated with pons.
+**C** (116)
+> Talk to the community behind every token. Open any token on pons and join the chat. Alpha. Not affiliated with pons.
 
 The "not affiliated with pons" line stays in whichever one you pick. The panel says the same thing, and it keeps nobody confusing family with the launchpad.
 
@@ -32,11 +32,11 @@ The "not affiliated with pons" line stays in whichever one you pick. The panel s
 Attach `post-1600x900.png` to the first one and pin it.
 
 ### 1. Pinned
-every token has a room now.
+every token has a community now.
 
-hold it and you're in. don't, and you see the door and how many holders are inside.
+open any token on pons and the chat is right there. hold it and you're in.
 
-family is live in alpha for pons: joinfamily.lol
+family is live in alpha: joinfamily.lol
 
 ### 2. Same day
 the dev always wears a green tag.
@@ -48,12 +48,12 @@ you always know who's talking.
 ### 3. Next day
 no sign up. no second wallet connect.
 
-open a token on pons and the room is already there.
+open a token on pons and the community chat is already there.
 
 ### 4. A day later
-sell and the door closes behind you.
+hold the token and you're in. sell it and the chat closes behind you.
 
-hold and it opens. that's the whole idea.
+that's the whole idea.
 
 ### 5. When people start installing
 it's alpha, so expect rough edges.
@@ -65,5 +65,6 @@ joinfamily.lol
 ## Notes
 
 - Lowercase and short matches how this crowd posts. Keep it that way.
+- The framing is "community": talk about the people in the chat, and mention holding only as the way in.
 - Nothing here claims pons endorses family. If they ever do, change the footer and the bio together.
-- Replies are where this grows: when someone posts a token, reply with what its room looks like.
+- Replies are where this grows: when someone posts a token, reply with what its community chat looks like.

@@ -71,7 +71,7 @@ function panel() {
   const badge = "0.907% of supply", bw = w(700, badge, 11.5) + 20;
   s += `<rect x="14" y="90" width="${bw}" height="22" rx="11" fill="${GREEN}" fill-opacity=".14" stroke="${GREEN}" stroke-opacity=".4"/>`;
   s += text(700, badge, 24, 105, 11.5, GREEN_TEXT);
-  s += text(600, "5 inside", 14 + bw + 10, 105, 12, MUTED);
+  s += text(600, "5 members", 14 + bw + 10, 105, 12, MUTED);
   // messages
   const msgs = [
     { who: "0x2b3d…fb5e", c: hsl(150, 55, 36), pct: "2.1%", t: "02:37 PM", body: "gm family, anyone watching the curve?" },
@@ -126,10 +126,10 @@ mkdirSync("brand/x", { recursive: true });
 {
   const body =
     glow(1190, 250, 330, 200) +
-    text(800, "Every token", 430, 205, 74, INK) +
-    text(800, "has a room.", 430, 285, 74, INK) +
-    text(700, "Only holders get in.", 432, 340, 32, GREEN_TEXT) +
-    panelAt(1030, 62, 1.0);
+    text(800, "Every token", 430, 200, 68, INK) +
+    text(800, "has a community.", 430, 275, 68, INK) +
+    text(700, "Hold the token to join the chat.", 432, 332, 30, GREEN_TEXT) +
+    panelAt(1060, 62, 1.0);
   out("banner-1500x500.png", png(doc(1500, 500, body, SURFACE), 1500));
 }
 

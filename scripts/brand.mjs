@@ -86,7 +86,7 @@ out("web/favicon.svg", fav);
 out("web/favicon-32.png", png(fav, 32));
 out("web/favicon-192.png", png(fav, 192));
 {
-  const t = THEMES.light, l = lockup(t), k = 760 / l.w, tagline = "holder-only chat for every token";
+  const t = THEMES.light, l = lockup(t), k = 760 / l.w, tagline = "the community chat for every token";
   const tw = width(semi, tagline, 38);
   const body = `<g transform="translate(${600 - (l.w * k) / 2} 200) scale(${k})">${l.body}</g>` + text(semi, tagline, 600 - tw / 2, 420, 38, t.muted);
   out("web/og-image-1200x630.png", png(svgDoc(1200, 630, body, t.bg), 1200));

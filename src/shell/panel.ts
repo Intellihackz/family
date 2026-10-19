@@ -167,7 +167,7 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
   const NOTICES: Record<string, string> = {
     slow_down: "Slow down a little.",
     too_long: "Too long, keep it under 280.",
-    not_holder: "You no longer hold this token.",
+    not_holder: "Hold this token to keep chatting.",
   };
   const setNotice = (text: string) => { const n = root.getElementById("n"); if (n) n.textContent = text; };
 
@@ -198,7 +198,7 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
 
   const gate = (title: string, sub: string, extra = "") =>
     `<div class="gate"><div class="lock">${ICON.lock}</div><h3>${title}</h3><div class="m sm">${sub}</div>${extra}</div>`;
-  const stat = (n?: number) => (n == null ? "" : `<div class="stat"><span class="dot"></span><b>${n}</b> ${n === 1 ? "holder" : "holders"} inside</div>`);
+  const stat = (n?: number) => (n == null ? "" : `<div class="stat"><span class="dot"></span><b>${n}</b> ${n === 1 ? "member" : "members"}</div>`);
 
   return {
     setChatNotice: setNotice,
@@ -223,18 +223,18 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
       const net = wrongNet ? `<div class="note">Switch your wallet to ${CHAIN.name} (chain ${CHAIN.id}).</div>` : "";
       switch (s.kind) {
         case "no-token":
-          body.innerHTML = `<div class="m">Open a token page on the launchpad to find its room.</div>`; break;
+          body.innerHTML = `<div class="m">Open a token page on the launchpad to find its community.</div>`; break;
         case "no-wallet":
-          body.innerHTML = gate("Holders only", "Connect your wallet on the site and we will check if you are in.", stat(s.holders)); break;
+          body.innerHTML = gate("Community chat", "Connect your wallet on the site and we will check if you are in.", stat(s.holders)); break;
         case "checking":
           body.innerHTML = `<div class="gate"><div class="skel" style="width:60%"></div><div class="skel" style="width:85%"></div><div class="m sm">Checking your balance</div></div>`; break;
         case "locked":
-          body.innerHTML = gate("Hold to join the family", `You do not hold this token yet. Buy some and the room opens up.`, stat(s.holders) + net); break;
+          body.innerHTML = gate("Join the community", `Hold this token to unlock the chat and talk with everyone in it.`, stat(s.holders) + net); break;
         case "error":
           body.innerHTML = gate("Something went wrong", esc(s.message)); break;
         case "holder": {
           const bar = `<div class="chip"><i style="background:hsl(${hue(s.wallet.address)} 55% var(--name-l))"></i>${esc(s.wallet.connectorName)} <code>${short(s.wallet.address)}</code></div>
-            ${s.isDev ? `<span class="devtag">dev</span>` : ""}<span class="badge">${fmtPct(s.holding.pct)} of supply</span>${s.holders != null ? `<span class="m sm">${s.holders} inside</span>` : ""}${net}`;
+            ${s.isDev ? `<span class="devtag">dev</span>` : ""}<span class="badge">${fmtPct(s.holding.pct)} of supply</span>${s.holders != null ? `<span class="m sm">${s.holders} ${s.holders === 1 ? "member" : "members"}</span>` : ""}${net}`;
           // Keep the chat DOM across re-renders so typing and scroll position survive the 30s recheck.
           if (root.getElementById("log")) { $("bar").innerHTML = bar; break; }
           body.innerHTML = `<div class="bar" id="bar">${bar}</div><div class="log" id="log"></div>
