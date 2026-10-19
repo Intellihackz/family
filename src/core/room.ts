@@ -6,9 +6,10 @@ async function bg<T>(m: Msg): Promise<T> {
   return r.data as T;
 }
 
-export type HolderInfo = { isDev: boolean; isHolder: boolean; balance: string; supply: string; decimals: number; pct: number };
+export type HolderInfo = { symbol?: string; isDev: boolean; isHolder: boolean; balance: string; supply: string; decimals: number; pct: number };
 export const checkHolder = (token: string, address: string) => bg<HolderInfo>({ type: "holder", token, address });
-export const holderCount = (token: string) => bg<{ count: number }>({ type: "holders", token }).then((r) => r.count);
+/** Member count plus the token's ticker, both for any visitor (no wallet needed). */
+export const roomStats = (token: string) => bg<{ count: number; symbol?: string }>({ type: "holders", token });
 
 export type ChatMessage = { id: number; address: string; text: string; ts: number; pct: number; dev?: boolean };
 

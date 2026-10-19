@@ -6,8 +6,15 @@ const BASE = process.env.PONS_API ?? "https://ponsfamily.com";
 const TTL = 10 * 60_000; // dev and curve never change for a token, so a long cache is safe
 const DEAD = "0x000000000000000000000000000000000000dead";
 
-type Info = { devs: Set<string>; contracts: Set<string>; at: number };
+type Info = { devs: Set<string>; contracts: Set<string>; symbol?: string; name?: string; at: number };
 const cache = new Map<Address, Info>();
+
+/** Token symbols and names are chosen by whoever launches the token, so treat them as untrusted text:
+ *  drop control and invisible direction characters (used to spoof what a label says), a leading "$", and cap the length. */
+const clean = (v: unknown, max: number): string | undefined =>
+  typeof v === "string"
+    ? v.replace(/[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]/g, "").trim().replace(/^\$+/, "").slice(0, max) || undefined
+    : undefined;
 
 async function getJson(url: string) {
   const r = await fetch(url, { signal: AbortSignal.timeout(5000) });
@@ -28,10 +35,17 @@ async function info(token: Address): Promise<Info> {
     contracts: launch.status === "fulfilled"
       ? new Set<string>([launch.value.curve, launch.value.pool].filter((a) => typeof a === "string" && isAddress(a)).map((a: string) => a.toLowerCase()))
       : hit?.contracts ?? new Set(),
+    symbol: launch.status === "fulfilled" ? clean(launch.value.symbol, 16) : hit?.symbol,
+    name: launch.status === "fulfilled" ? clean(launch.value.name, 48) : hit?.name,
     at: flags.status === "fulfilled" && launch.status === "fulfilled" ? Date.now() : Date.now() - TTL + 30_000,
   };
   cache.set(token, next);
   return next;
+}
+
+export async function tokenLabel(token: Address): Promise<{ symbol?: string; name?: string }> {
+  const { symbol, name } = await info(token);
+  return { symbol, name };
 }
 
 export const devAddresses = async (token: Address) => (await info(token)).devs;

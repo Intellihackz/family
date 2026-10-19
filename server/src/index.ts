@@ -2,7 +2,7 @@ import { serve } from "@hono/node-server";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { holderCount, holding, parseAddr } from "./chain.js";
-import { devAddresses } from "./launch.js";
+import { devAddresses, tokenLabel } from "./launch.js";
 import { ChatError, flush, poll, post, remove, storageInfo } from "./rooms.js";
 
 const app = new Hono();
@@ -16,8 +16,8 @@ app.get("/holder", async (c) => {
   const owner = parseAddr(c.req.query("address"));
   if (!token || !owner) return c.json({ error: "bad_address" }, 400);
   try {
-    const [h, devs] = await Promise.all([holding(token, owner), devAddresses(token)]);
-    return c.json({ ...h, isDev: devs.has(owner.toLowerCase()) });
+    const [h, devs, label] = await Promise.all([holding(token, owner), devAddresses(token), tokenLabel(token)]);
+    return c.json({ ...h, isDev: devs.has(owner.toLowerCase()), symbol: label.symbol });
   } catch {
     return c.json({ error: "not_a_token" }, 404);
   }
@@ -28,7 +28,8 @@ app.get("/holders", async (c) => {
   const token = parseAddr(c.req.query("token"));
   if (!token) return c.json({ error: "bad_address" }, 400);
   try {
-    return c.json({ count: await holderCount(token) });
+    const [count, label] = await Promise.all([holderCount(token), tokenLabel(token)]);
+    return c.json({ count, symbol: label.symbol });
   } catch {
     return c.json({ error: "rpc_failed" }, 502);
   }

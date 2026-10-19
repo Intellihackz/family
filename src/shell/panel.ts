@@ -20,6 +20,8 @@ export type Panel = {
   /** Append chat messages. Pass reset to clear the log first (new room or new wallet). */
   addMessages(msgs: ChatMessage[], reset?: boolean): void;
   setChatNotice(text: string): void;
+  /** Show the token's ticker in the header, or hide it with null. */
+  setTicker(symbol: string | null): void;
 };
 
 const svg = (d: string, size = 16, sw = 1.6) =>
@@ -78,7 +80,11 @@ const CSS = `
   header{display:flex;align-items:center;gap:8px;padding:11px 12px 11px 14px;border-bottom:1px solid var(--border);background:var(--surface)}
   .mark{font-weight:700;font-size:15px;letter-spacing:-.02em}
   .tag{font-size:11px;color:var(--muted);padding-left:8px;border-left:1px solid var(--border)}
-  .icon{margin-left:auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--muted);transition:background .15s,color .15s}
+  .grow{flex:1;min-width:0}
+  .ticker{max-width:112px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:800;font-size:12px;color:var(--accent-text);
+    background:color-mix(in srgb,var(--accent) 14%,transparent);border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);padding:2px 9px;border-radius:999px}
+  .ticker[hidden]{display:none}
+  .icon{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:var(--muted);transition:background .15s,color .15s}
   .icon:hover{background:var(--raised);color:var(--text)}
 
   main{padding:14px;display:flex;flex-direction:column;min-height:0}
@@ -129,7 +135,7 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
     <div class="dock" id="dock" data-min="false" data-s="idle">
       <button class="pill" id="pill" aria-label="Open family chat"><span class="logo">${logo("p")}<span class="dot"></span></span><span class="unread" id="unread" hidden></span></button>
       <section class="card" aria-label="${t.wordmark} chat">
-        <header><span class="logo sm">${logo("h")}<span class="dot"></span></span><span class="mark">${t.wordmark}</span><span class="tag">${t.hostTag}</span>
+        <header><span class="logo sm">${logo("h")}<span class="dot"></span></span><span class="mark">${t.wordmark}</span><span class="tag">${t.hostTag}</span><span class="grow"></span><span class="ticker" id="ticker" hidden></span>
           <button class="icon" id="min" aria-label="Minimize" title="Minimize (Esc)">${ICON.min}</button></header>
         <main id="body"></main>
         <footer>${t.footer}</footer>
@@ -202,6 +208,12 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
 
   return {
     setChatNotice: setNotice,
+    setTicker(symbol) {
+      const el = $("ticker");
+      el.hidden = !symbol;
+      el.textContent = symbol ? `$${symbol}` : ""; // textContent only: the symbol is chosen by the token's creator
+      el.title = symbol ? `$${symbol}` : "";
+    },
     addMessages(msgs, reset) {
       const log = root.getElementById("log");
       if (!log) return;

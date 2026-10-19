@@ -1,6 +1,6 @@
 import { watchSiteWallet, type SiteWallet } from "./core/siteWallet";
 import { watchLocation } from "./core/location";
-import { checkHolder, holderCount, pollMessages, sendMessage } from "./core/room";
+import { checkHolder, pollMessages, roomStats, sendMessage } from "./core/room";
 import { tokenFromLocation } from "./core/token";
 import { mountPanel } from "./shell/panel";
 
@@ -13,6 +13,7 @@ let recheck: ReturnType<typeof setInterval> | undefined;
 let chatGen = 0; // bumping this stops the running poll loop
 let chatFor = ""; // "<token>:<address>" the loop is serving
 let seen = 0;
+const tickers = new Map<string, string>(); // token -> ticker, so revisiting a token shows it at once
 
 const panel = mountPanel(async (text) => {
   if (!token || !current) throw new Error("no_wallet");
@@ -49,16 +50,23 @@ function stopChat() { chatGen++; chatFor = ""; }
 
 async function evaluate(tk: string, wallet: SiteWallet, first: boolean) {
   if (first) panel.render({ kind: "checking", token: tk, wallet });
-  // Holder count is a nice-to-have, so a failure there must not break the gate.
-  const [info, holders] = await Promise.all([
+  // Member count and ticker are nice-to-haves, so a failure there must not break the gate.
+  const [info, stats] = await Promise.all([
     checkHolder(tk, wallet.address).catch((e: Error) => e),
-    holderCount(tk).catch(() => undefined),
+    roomStats(tk).catch(() => undefined),
   ]);
   if (stale(tk, wallet)) return; // page or wallet changed while we were waiting
+  const holders = stats?.count;
+  showTicker(tk, (info instanceof Error ? undefined : info.symbol) ?? stats?.symbol);
   if (info instanceof Error) return panel.render({ kind: "error", token: tk, wallet, message: "Could not check your balance. Retrying." });
   if (!info.isHolder && !info.isDev) { stopChat(); return panel.render({ kind: "locked", token: tk, wallet, holders }); }
   panel.render({ kind: "holder", token: tk, wallet, holding: { balance: info.balance, supply: info.supply, pct: info.pct }, isDev: info.isDev, holders });
   if (chatFor !== `${tk}:${wallet.address}`) chatLoop(tk, wallet);
+}
+
+function showTicker(tk: string, symbol?: string) {
+  if (symbol) tickers.set(tk, symbol);
+  if (token === tk) panel.setTicker(tickers.get(tk) ?? null);
 }
 
 /** Rebuild everything for the current page and wallet. Runs on load and on every change of either. */
@@ -66,10 +74,15 @@ async function refresh() {
   clearInterval(recheck);
   stopChat();
   const tk = token, wallet = current;
+  panel.setTicker(tk ? tickers.get(tk) ?? null : null); // never show the previous token's ticker
   if (!tk) return panel.render({ kind: "no-token" });
   if (!wallet) {
     panel.render({ kind: "no-wallet", token: tk });
-    holderCount(tk).then((holders) => token === tk && !current && panel.render({ kind: "no-wallet", token: tk, holders })).catch(() => {});
+    roomStats(tk).then((stats) => {
+      if (token !== tk) return;
+      showTicker(tk, stats.symbol);
+      if (!current) panel.render({ kind: "no-wallet", token: tk, holders: stats.count });
+    }).catch(() => {});
     return;
   }
   await evaluate(tk, wallet, true);
