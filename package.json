@@ -9,8 +9,9 @@
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/icons.mjs",
     "brand": "node scripts/brand.mjs",
-    "pack": "FAMILY_API=${FAMILY_API:-https://family-production-e140.up.railway.app} npm run build && rm -f landing/family-alpha.zip && (cd dist && zip -qr ../landing/family-alpha.zip . -x \"*.map\")",
-    "x": "node scripts/x.mjs"
+    "pack": "npm run build && rm -f landing/family-alpha.zip && (cd dist && zip -qr ../landing/family-alpha.zip . -x \"*.map\")",
+    "x": "node scripts/x.mjs",
+    "dev": "FAMILY_API=http://localhost:8787 node build.mjs --watch"
   },
   "devDependencies": {
     "@fontsource/nunito": "^5.3.0",

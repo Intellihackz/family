@@ -9,4 +9,4 @@ data
 # duplicate download of brand/
 brand 2/
 # unzipped copies of the X kit, not part of the project
-x-page-kit/
+x-page-kit*/

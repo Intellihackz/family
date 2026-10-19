@@ -30,8 +30,9 @@ landing/        static landing page (plain HTML and CSS, no build step)
 ## Run locally
 
 ```bash
-npm install && npm run build          # extension into dist/
+npm install && npm run build          # extension into dist/ (talks to the production server)
 cd server && npm install && npm run dev   # backend on :8787
+npm run dev                                # in the repo root: rebuild the extension against localhost:8787
 ```
 
 Load `dist/` at `chrome://extensions` (Developer mode, Load unpacked), then open a token page on ponsfamily.
@@ -59,7 +60,7 @@ The chat store is a single JSON file, so run one instance only.
 npm run pack
 ```
 
-Builds against the production server (override with `FAMILY_API=...`), strips source maps, and writes `landing/family-alpha.zip`. The landing page links to that file, so commit and push it to publish a new build. Bump `version` and `version_name` in `src/manifest.mjs` first. The API URL must be https.
+Builds against the production server, strips source maps, and writes `landing/family-alpha.zip`. The landing page links to that file, so commit and push it to publish a new build. Bump `version` and `version_name` in `src/manifest.mjs` first. The API URL must be https.
 
 Until the extension is on the Chrome Web Store, people install the zip by hand through Developer mode. The landing page walks them through it.
 
@@ -71,7 +72,8 @@ Until the extension is on the Chrome Web Store, people install the zip by hand t
 
 | Command | What it does |
 | --- | --- |
-| `npm run build` / `watch` | Bundle the extension (targets localhost) |
+| `npm run build` / `watch` | Bundle the extension (targets the production server) |
+| `npm run dev` | Watch build against `localhost:8787` for local server work |
 | `npm run pack` | Build the release zip into `landing/` |
 | `npm run icons` | Render toolbar icons from `assets/mark.svg` |
 | `npm run brand` | Rebuild the brand kit in `brand/` |
