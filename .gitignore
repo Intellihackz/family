@@ -1,0 +1,9 @@
+node_modules
+dist
+data
+.env
+*.log
+*.zip
+.DS_Store
+# duplicate download of brand/
+brand 2/
