@@ -89,6 +89,16 @@
 
     .theme { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; padding: 0; }
     .theme:hover { background: var(--raised); }
+    .ca-wrap { padding: 0 0 8px; }
+    .ca { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); padding: 18px 22px; }
+    .ca-ticker { font-weight: 800; font-size: 15px; color: var(--green-text); background: color-mix(in srgb, var(--green) 14%, transparent); border: 1px solid color-mix(in srgb, var(--green) 40%, transparent); padding: 4px 12px; border-radius: 999px; }
+    .ca-label { font-weight: 800; font-size: 13px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--green-text); }
+    .ca-value { flex: 1 1 280px; min-width: 0; font: 600 15px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--ink); overflow-wrap: anywhere; }
+    .ca-value.soon { font-family: var(--font); font-weight: 700; color: var(--muted); }
+    .ca-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .ca-actions button, .ca-actions a { font: 700 14px/1 var(--font); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 11px 18px; cursor: pointer; text-decoration: none; }
+    .ca-actions button:hover, .ca-actions a:hover { background: var(--raised); }
+    .ca-actions [hidden] { display: none; }
     .nav-actions { display: flex; align-items: center; gap: 10px; }
     .xlink { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--ink); text-decoration: none; transition: background-color .25s, border-color .25s, color .25s; }
     .xlink:hover { background: var(--raised); }
@@ -267,6 +277,18 @@
     </main>
 
 
+    <section class="ca-wrap" id="token" aria-label="family token">
+      <div class="ca">
+        <span class="ca-ticker">$FAMILY</span>
+        <span class="ca-label">Contract address</span>
+        <code class="ca-value soon" id="ca-value">Coming soon</code>
+        <div class="ca-actions">
+          <button type="button" id="ca-copy" hidden>Copy</button>
+          <a id="ca-link" href="#" target="_blank" rel="noopener noreferrer" hidden>View on pons</a>
+        </div>
+      </div>
+    </section>
+
     <section aria-labelledby="why-h">
       <p class="kicker">Why it works</p>
       <h2 id="why-h">A community that is actually in it.</h2>
@@ -330,6 +352,21 @@
       });
       // Until the visitor picks one, keep following the system.
       mq.addEventListener("change", function (e) { if (!saved()) { root.dataset.theme = e.matches ? "dark" : "light"; label(); } });
+
+      // ---- Our token's contract address. Paste it between the quotes, then redeploy. Empty shows "Coming soon".
+      var CA = "";
+      var caValue = document.getElementById("ca-value"), caCopy = document.getElementById("ca-copy"), caLink = document.getElementById("ca-link");
+      if (/^0x[0-9a-fA-F]{40}$/.test(CA)) { // only ever render something that is exactly an address
+        caValue.textContent = CA;
+        caValue.classList.remove("soon");
+        caLink.href = "https://ponsfamily.com/launchpad/" + CA;
+        caLink.hidden = false;
+        caCopy.hidden = false;
+        caCopy.addEventListener("click", function () {
+          var done = function () { caCopy.textContent = "Copied"; setTimeout(function () { caCopy.textContent = "Copy"; }, 1600); };
+          if (navigator.clipboard) navigator.clipboard.writeText(CA).then(done, done); else done();
+        });
+      }
 
       var copy = document.getElementById("copy");
       copy.addEventListener("click", function () {
