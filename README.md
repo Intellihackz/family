@@ -24,6 +24,7 @@ server/         Hono + viem backend (holder checks, chat)
 assets/         logo mark (source of truth)
 brand/          generated brand kit (logo, X, web)
 scripts/        icon and brand kit generators
+landing/        static landing page (plain HTML and CSS, no build step)
 ```
 
 ## Run locally
@@ -59,6 +60,10 @@ FAMILY_API=https://<your-railway-domain> npm run pack
 ```
 
 This builds against your backend and writes `family-extension.zip`, ready for the Chrome Web Store. The API URL must be https.
+
+## Landing page
+
+`landing/` is a static site with self-hosted fonts. Deploy the folder to any static host. Before launch, set the absolute URL of `assets/og-image.png` in the `og:image` tag so link previews work, and swap the "coming soon" buttons for the Chrome Web Store link once the extension is published.
 
 ## Scripts
 

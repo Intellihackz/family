@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>family on pons</title>
+  <meta name="description" content="A holder-only chat room on every token page. If you hold the token, you are in the room." />
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png" />
+  <!-- Link previews need absolute URLs: replace with the deployed domain. -->
+  <meta property="og:title" content="family on pons" />
+  <meta property="og:description" content="A holder-only chat room on every token page." />
+  <meta property="og:image" content="assets/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="color-scheme" content="light dark" />
+
+  <link rel="preload" href="assets/fonts/nunito-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    @font-face { font-family: "Nunito"; font-weight: 600; font-display: swap; src: url("assets/fonts/nunito-latin-600-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Nunito"; font-weight: 700; font-display: swap; src: url("assets/fonts/nunito-latin-700-normal.woff2") format("woff2"); }
+    @font-face { font-family: "Nunito"; font-weight: 800; font-display: swap; src: url("assets/fonts/nunito-latin-800-normal.woff2") format("woff2"); }
+
+    :root {
+      --bg: #f5f5f7; --card: #ffffff; --surface: #f5f5f7; --raised: #eceee9;
+      --ink: #0c1500; --muted: rgba(12, 21, 0, 0.62); --line: rgba(12, 21, 0, 0.14);
+      --green: #00c805; --green-text: #008a06; --on-green: #0c1500; --warn: #e04600;
+      --shadow: 0 2px 4px rgba(12, 21, 0, 0.08), 0 12px 32px rgba(12, 21, 0, 0.11);
+      --name-l: 36%;
+      --font: Nunito, ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0b0b; --card: #1c1c1c; --surface: #252525; --raised: #2e2e2e;
+        --ink: #fdfef9; --muted: rgba(253, 254, 249, 0.62); --line: rgba(253, 254, 249, 0.12);
+        --green-text: #00c805; --warn: #ff5000;
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.34), 0 12px 32px rgba(0, 0, 0, 0.32);
+        --name-l: 68%;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 17px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+    img { display: block; }
+    a { color: inherit; }
+    .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    :focus-visible { outline: 2px solid var(--green); outline-offset: 3px; border-radius: 8px; }
+
+    /* nav */
+    .nav { display: flex; align-items: center; justify-content: space-between; padding: 22px 0; }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 800; font-size: 22px; letter-spacing: -0.02em; }
+    .brand img { width: 34px; height: 34px; }
+    .brand small { font-weight: 600; font-size: 13px; color: var(--muted); padding-left: 10px; border-left: 1px solid var(--line); letter-spacing: 0; }
+    .nav a.link { font-weight: 700; font-size: 15px; text-decoration: none; color: var(--muted); }
+    .nav a.link:hover { color: var(--ink); }
+
+    /* buttons */
+    .btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 26px; border-radius: 999px; font: 800 16px/1 var(--font); text-decoration: none; }
+    .btn.primary { background: var(--green); color: var(--on-green); }
+    .btn.soon { background: var(--card); color: var(--ink); border: 1px solid var(--line); cursor: default; }
+    .btn.soon em { font-style: normal; font-size: 12px; font-weight: 700; color: var(--green-text); background: color-mix(in srgb, var(--green) 14%, transparent); padding: 4px 10px; border-radius: 999px; }
+    .btn.ghost { color: var(--ink); }
+    .btn.ghost:hover { background: var(--raised); }
+
+    /* hero */
+    .hero { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px; align-items: center; padding: 56px 0 96px; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; color: var(--green-text); background: color-mix(in srgb, var(--green) 13%, transparent); padding: 6px 14px 6px 10px; border-radius: 999px; }
+    .eyebrow i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 25%, transparent); }
+    h1 { margin: 22px 0 20px; font-size: clamp(40px, 5.6vw, 68px); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; text-wrap: balance; }
+    .lead { max-width: 30em; margin: 0 0 32px; color: var(--muted); font-size: 19px; }
+    .cta { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+    /* product stage */
+    .stage { position: relative; min-height: 470px; }
+    .page { position: absolute; inset: 0 40px 70px 0; background: var(--card); border: 1px solid var(--line); border-radius: 28px; box-shadow: var(--shadow); padding: 24px; overflow: hidden; }
+    .sk { height: 12px; border-radius: 6px; background: var(--raised); }
+    .page .row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+    .page .dotbig { width: 44px; height: 44px; border-radius: 12px; background: var(--raised); flex: none; }
+    .page svg { width: 100%; height: 150px; margin-top: 18px; display: block; }
+    .page .btnrow { display: flex; gap: 10px; margin-top: 18px; }
+    .page .btnrow span { height: 40px; border-radius: 999px; background: var(--raised); flex: 1; }
+    .page .btnrow span:last-child { background: color-mix(in srgb, var(--green) 55%, var(--raised)); }
+
+    .panel { position: absolute; right: 0; bottom: 0; width: min(330px, 92%); background: var(--card); border: 1px solid var(--line); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; font-size: 13px; line-height: 1.45; }
+    .panel header { display: flex; align-items: center; gap: 8px; padding: 11px 12px 11px 14px; background: var(--surface); border-bottom: 1px solid var(--line); }
+    .logo { position: relative; width: 24px; height: 24px; flex: none; }
+    .logo img { width: 100%; height: 100%; }
+    .logo i { position: absolute; right: -3px; bottom: -2px; width: 9px; height: 9px; border-radius: 50%; background: var(--green); border: 2px solid var(--surface); box-shadow: 0 0 0 3px color-mix(in srgb, var(--green) 22%, transparent); }
+    .panel .mark { font-weight: 800; font-size: 15px; letter-spacing: -0.02em; }
+    .panel .tag { font-size: 11px; font-weight: 600; color: var(--muted); padding-left: 8px; border-left: 1px solid var(--line); }
+    .panel .min { margin-left: auto; width: 14px; height: 2px; border-radius: 2px; background: var(--muted); }
+    .panel main { padding: 14px; }
+    .bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px 3px 7px; border-radius: 999px; background: var(--surface); border: 1px solid var(--line); font-size: 11.5px; font-weight: 600; }
+    .chip b { width: 8px; height: 8px; border-radius: 50%; }
+    .badge { padding: 3px 9px; border-radius: 999px; font-size: 11.5px; font-weight: 700; color: var(--green-text); background: color-mix(in srgb, var(--green) 14%, transparent); border: 1px solid color-mix(in srgb, var(--green) 40%, transparent); }
+    .devtag { padding: 0 7px; border-radius: 999px; background: var(--green); color: var(--on-green); font-size: 10px; font-weight: 800; line-height: 15px; }
+    .m { color: var(--muted); }
+    .msgs { display: flex; flex-direction: column; gap: 2px; margin: 0 -6px; }
+    .msg { padding: 6px 8px; border-radius: 10px; }
+    .msg.me { background: color-mix(in srgb, var(--green) 11%, transparent); }
+    .meta { display: flex; align-items: baseline; gap: 6px; font-size: 11px; color: var(--muted); }
+    .who { font-weight: 700; }
+    .time { margin-left: auto; font-variant-numeric: tabular-nums; }
+    .compose { display: flex; gap: 6px; margin-top: 10px; }
+    .compose .in { flex: 1; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; color: var(--muted); }
+    .compose .send { width: 36px; height: 36px; border-radius: 50%; background: var(--green); display: grid; place-items: center; color: var(--on-green); }
+    .panel footer { padding: 8px 14px; font-size: 10.5px; color: var(--muted); border-top: 1px solid var(--line); }
+
+    /* sections */
+    section { padding: 40px 0 72px; }
+    .kicker { font-weight: 800; font-size: 14px; color: var(--green-text); letter-spacing: 0.02em; margin: 0 0 12px; }
+    h2 { margin: 0 0 14px; font-size: clamp(30px, 4vw, 46px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 800; text-wrap: balance; max-width: 18em; }
+    .sub { margin: 0 0 40px; color: var(--muted); font-size: 18px; max-width: 34em; }
+
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: s; }
+    .step { background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 28px; box-shadow: var(--shadow); }
+    .step::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--green); color: var(--on-green); font-weight: 800; margin-bottom: 18px; }
+    .step h3 { margin: 0 0 8px; font-size: 21px; letter-spacing: -0.02em; font-weight: 800; }
+    .step p { margin: 0; color: var(--muted); font-size: 16px; }
+
+    .feats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px 32px; }
+    .feat .ic { width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: color-mix(in srgb, var(--green) 14%, transparent); color: var(--green-text); margin-bottom: 14px; }
+    .feat svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+    .feat h3 { margin: 0 0 6px; font-size: 19px; letter-spacing: -0.015em; font-weight: 800; }
+    .feat p { margin: 0; color: var(--muted); font-size: 16px; }
+
+    .closing { text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: 32px; box-shadow: var(--shadow); padding: 64px 24px; margin-bottom: 24px; }
+    .closing img { width: 64px; height: 64px; margin: 0 auto 20px; }
+    .closing h2 { margin-left: auto; margin-right: auto; }
+    .closing .sub { margin: 0 auto 28px; }
+
+    footer.site { padding: 32px 0 56px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; color: var(--muted); font-size: 14px; }
+    footer.site .brand { font-size: 18px; color: var(--ink); }
+    footer.site .brand img { width: 26px; height: 26px; }
+
+    @media (prefers-reduced-motion: no-preference) {
+      .hero > div:first-child > * { animation: up .6s cubic-bezier(.2, .7, .2, 1) both; }
+      .hero > div:first-child > :nth-child(2) { animation-delay: .06s; }
+      .hero > div:first-child > :nth-child(3) { animation-delay: .12s; }
+      .hero > div:first-child > :nth-child(4) { animation-delay: .18s; }
+      .panel { animation: up .7s .2s cubic-bezier(.2, .7, .2, 1) both; }
+      @keyframes up { from { opacity: 0; transform: translateY(14px); } }
+    }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 40px; padding: 32px 0 64px; }
+      .stage { min-height: 440px; }
+      .steps, .feats { grid-template-columns: 1fr; }
+      .feats { gap: 28px; }
+      section { padding: 24px 0 56px; }
+      .lead { font-size: 18px; }
+    }
+    @media (max-width: 480px) {
+      .wrap { padding: 0 18px; }
+      .page { inset: 0 18px 90px 0; }
+      .nav a.link { display: none; }
+      .closing { padding: 44px 18px; border-radius: 26px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <nav class="nav" aria-label="Primary">
+      <a class="brand" href="#top"><img src="assets/favicon.svg" alt="" /><span>family</span><small>on pons</small></a>
+      <a class="link" href="#how">How it works</a>
+    </nav>
+
+    <main id="top">
+      <div class="hero">
+        <div>
+          <span class="eyebrow"><i></i>Chrome extension for ponsfamily</span>
+          <h1>The token page, with a room for its holders.</h1>
+          <p class="lead">family adds a chat to every token page. If you hold the token, you are in the room. If you do not, you see a locked door and how many holders are already inside.</p>
+          <div class="cta">
+            <span class="btn soon" aria-disabled="true">Add to Chrome <em>coming soon</em></span>
+            <a class="btn ghost" href="#how">See how it works</a>
+          </div>
+        </div>
+
+        <div class="stage" aria-hidden="true">
+          <div class="page">
+            <div class="row"><div class="dotbig"></div><div style="flex:1"><div class="sk" style="width:46%;margin-bottom:10px"></div><div class="sk" style="width:28%"></div></div></div>
+            <svg viewBox="0 0 400 150" preserveAspectRatio="none"><polyline fill="none" stroke="var(--green)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" points="0,120 30,100 60,108 95,70 130,82 165,50 200,64 235,38 270,52 305,30 340,40 400,18"/><line x1="0" y1="146" x2="400" y2="146" stroke="var(--line)" stroke-width="2"/></svg>
+            <div class="btnrow"><span></span><span></span></div>
+          </div>
+
+          <div class="panel">
+            <header>
+              <span class="logo"><img src="assets/favicon.svg" alt="" /><i></i></span>
+              <span class="mark">family</span><span class="tag">on pons</span><span class="min"></span>
+            </header>
+            <main>
+              <div class="bar">
+                <span class="chip"><b style="background:hsl(330 55% var(--name-l))"></b>MetaMask 0x29cb…7141</span>
+                <span class="badge">0.907% of supply</span>
+                <span class="m" style="font-size:12px">5 inside</span>
+              </div>
+              <div class="msgs">
+                <div class="msg"><div class="meta"><span class="who" style="color:hsl(150 55% var(--name-l))">0x2b3d…fb5e</span><span>2.1%</span><span class="time">02:37 PM</span></div>gm family, anyone watching the curve?</div>
+                <div class="msg"><div class="meta"><span class="who" style="color:hsl(290 55% var(--name-l))">0xd3de…cd20</span><span class="devtag">dev</span><span>0.000%</span><span class="time">02:41 PM</span></div>shipping the branding editor this week</div>
+                <div class="msg me"><div class="meta"><span class="who" style="color:hsl(330 55% var(--name-l))">you</span><span>0.907%</span><span class="time">02:44 PM</span></div>holding. thanks for the update</div>
+              </div>
+              <div class="compose"><div class="in">Message the family</div><div class="send"><svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h9.5M8.5 4l4 4-4 4"/></svg></div></div>
+            </main>
+            <footer>community built, not affiliated with pons</footer>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <section id="how" aria-labelledby="how-h">
+      <p class="kicker">How it works</p>
+      <h2 id="how-h">Hold the token, join the room.</h2>
+      <p class="sub">No sign up and no second wallet connection. family works with what is already on the page.</p>
+      <div class="steps">
+        <div class="step"><h3>Open a token page</h3><p>family reads the contract address from the page. Every token gets its own room the moment it launches.</p></div>
+        <div class="step"><h3>We check your wallet</h3><p>It follows the wallet you already connected on the site and checks your balance on chain.</p></div>
+        <div class="step"><h3>Hold to talk</h3><p>Holders chat with a badge for their share of supply. Sell, and the room closes at the next check.</p></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="why-h">
+      <p class="kicker">Why a gated room</p>
+      <h2 id="why-h">Skin in the game filters most of the noise.</h2>
+      <p class="sub">Questions like whether the dev is still holding get asked in places anyone can shout in. Here, only holders can speak.</p>
+      <div class="feats">
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="3"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div><h3>Holders only</h3><p>The gate does most of the moderating. Everyone talking is exposed to the same token you are.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 12.5V5a1 1 0 0 1 1-1h7.5L20 11.5 12.5 19a1 1 0 0 1-1.4 0L4 12.5Z"/><circle cx="8.5" cy="8.5" r="1.2"/></svg></div><h3>The dev is always marked</h3><p>Devs get a green tag, even after selling, so you can see when they speak and how much they hold.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 4a8 8 0 1 0 8 8h-8V4Z"/><path d="M15 3.3A8 8 0 0 1 20.7 9H15V3.3Z"/></svg></div><h3>Position on every message</h3><p>Each message shows the sender's share of supply, so a big holder and a tiny one never look the same.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="9" r="3.2"/><path d="M3.5 19a5.5 5.5 0 0 1 11 0"/><path d="M16 6.2a3.2 3.2 0 0 1 0 5.6M18 19a5.5 5.5 0 0 0-2.6-4.7"/></svg></div><h3>A real holder count</h3><p>Locked rooms show how many holders are inside, with the bonding curve and burn address left out.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6 7 7M17 17l1.4 1.4M5.6 18.4 7 17M17 7l1.4-1.4"/></svg></div><h3>Native on the page</h3><p>It follows the site's light and dark theme and tucks away into a single button when you want the page back.</p></div>
+        <div class="feat"><div class="ic"><svg viewBox="0 0 24 24"><path d="M12 3.5 19 6v5.5c0 4.2-2.8 7.4-7 9-4.2-1.6-7-4.8-7-9V6l7-2.5Z"/><path d="m9 12 2.2 2.2L15.5 10"/></svg></div><h3>Independent and clear about it</h3><p>Community built and not affiliated with pons. Every panel says so, and it never asks you to sign anything.</p></div>
+      </div>
+    </section>
+
+    <section aria-label="Get family">
+      <div class="closing">
+        <img src="assets/favicon.svg" alt="" />
+        <h2>Talk where the token lives.</h2>
+        <p class="sub">family is on its way to the Chrome Web Store.</p>
+        <span class="btn soon" aria-disabled="true">Add to Chrome <em>coming soon</em></span>
+      </div>
+    </section>
+
+    <footer class="site">
+      <a class="brand" href="#top"><img src="assets/favicon.svg" alt="" /><span>family</span></a>
+      <span>Community built, not affiliated with pons.</span>
+    </footer>
+  </div>
+</body>
+</html>
