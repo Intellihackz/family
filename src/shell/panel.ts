@@ -205,7 +205,7 @@ export function mountPanel(onSend: (text: string) => Promise<void>): Panel {
     addMessages(msgs, reset) {
       const log = root.getElementById("log");
       if (!log) return;
-      if (reset) log.textContent = "";
+      if (reset) { log.textContent = ""; unread = 0; showUnread(); } // new room: drop the old room's unread count
       if (!msgs.length) {
         if (!log.childElementCount) log.innerHTML = `<div class="empty">No messages yet.<br/>Say gm to the family.</div>`;
         return;
