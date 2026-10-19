@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "icons": "node scripts/icons.mjs",
     "brand": "node scripts/brand.mjs",
-    "pack": "npm run build && rm -f landing/family-alpha.zip && (cd dist && zip -qr ../landing/family-alpha.zip . -x \"*.map\")",
+    "pack": "node scripts/pack.mjs",
     "x": "node scripts/x.mjs",
     "dev": "FAMILY_API=http://localhost:8787 node build.mjs --watch"
   },

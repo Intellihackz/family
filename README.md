@@ -60,7 +60,7 @@ The chat store is a single JSON file, written atomically and flushed on shutdown
 npm run pack
 ```
 
-Builds against the production server, strips source maps, and writes `landing/family-alpha.zip`. The landing page links to that file, so commit and push it to publish a new build. Bump `version` and `version_name` in `src/manifest.mjs` first. The API URL must be https.
+Builds against the production server, strips source maps, and writes `landing/family-alpha-<version>.zip`. It also points the download button on the landing page at that file and updates the version label. The version is in the filename because the host caches files for a year without revalidating, so a fixed name would keep serving old builds. Commit and push to publish. Bump `version` and `version_name` in `src/manifest.mjs` first. The API URL must be https.
 
 Until the extension is on the Chrome Web Store, people install the zip by hand through Developer mode. The landing page walks them through it.
 
