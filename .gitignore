@@ -4,6 +4,7 @@ data
 .env
 *.log
 *.zip
+!landing/family-alpha.zip
 .DS_Store
 # duplicate download of brand/
 brand 2/

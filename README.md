@@ -53,23 +53,26 @@ Load `dist/` at `chrome://extensions` (Developer mode, Load unpacked), then open
 
 The chat store is a single JSON file, so run one instance only.
 
-## Build the extension for release
+## Release the alpha
 
 ```bash
-FAMILY_API=https://<your-railway-domain> npm run pack
+npm run pack
 ```
 
-This builds against your backend and writes `family-extension.zip`, ready for the Chrome Web Store. The API URL must be https.
+Builds against the production server (override with `FAMILY_API=...`), strips source maps, and writes `landing/family-alpha.zip`. The landing page links to that file, so commit and push it to publish a new build. Bump `version` and `version_name` in `src/manifest.mjs` first. The API URL must be https.
+
+Until the extension is on the Chrome Web Store, people install the zip by hand through Developer mode. The landing page walks them through it.
 
 ## Landing page
 
-`landing/` is a static site with self-hosted fonts. Deploy the folder to any static host. Before launch, set the absolute URL of `assets/og-image.png` in the `og:image` tag so link previews work, and swap the "coming soon" buttons for the Chrome Web Store link once the extension is published.
+`landing/` is a static site with self-hosted fonts: set the Root Directory to `/landing` and leave build and install commands empty. It includes the alpha download, install steps and a light/dark toggle that remembers the visitor's choice. Before launch, set the absolute URL of `assets/og-image.png` in the `og:image` tag so link previews work.
 
 ## Scripts
 
 | Command | What it does |
 | --- | --- |
-| `npm run build` / `watch` | Bundle the extension |
+| `npm run build` / `watch` | Bundle the extension (targets localhost) |
+| `npm run pack` | Build the release zip into `landing/` |
 | `npm run icons` | Render toolbar icons from `assets/mark.svg` |
 | `npm run brand` | Rebuild the brand kit in `brand/` |
 | `npm run typecheck` | Typecheck the extension (also in `server/`) |

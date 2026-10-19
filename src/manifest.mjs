@@ -6,7 +6,8 @@ export const HOSTS = ["https://*.ponsfamily.com/*", "https://ponsfamily.com/*"];
 export const manifest = {
   manifest_version: 3,
   name: "family on pons",
-  version: "0.0.1",
+  version: "0.1.0",
+  version_name: "0.1.0 alpha",
   description: "Holder-only chat rooms on token pages. Community built, not affiliated with pons.",
   icons: { 16: "icons/16.png", 32: "icons/32.png", 48: "icons/48.png", 128: "icons/128.png" },
   action: { default_title: "family on pons", default_icon: { 16: "icons/16.png", 32: "icons/32.png", 48: "icons/48.png", 128: "icons/128.png" } },
