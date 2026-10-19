@@ -13,10 +13,21 @@ const MIN_GAP_MS = 2_000;
 const WAIT_MAX_MS = 20_000;
 // Where chat history lives. Railway sets RAILWAY_VOLUME_MOUNT_PATH when a Volume is attached, so attaching one is
 // enough. Without a volume the disk is wiped on every deploy and chat history disappears.
-const VOLUME = process.env.DATA_DIR ?? process.env.RAILWAY_VOLUME_MOUNT_PATH;
+const MOUNT = process.env.RAILWAY_VOLUME_MOUNT_PATH;
+const VOLUME = process.env.DATA_DIR ?? MOUNT;
 const DIR = VOLUME ?? "data";
 const FILE = join(DIR, "rooms.json");
 const ON_RAILWAY = Boolean(process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PROJECT_ID);
+
+// "Persistent" must be true only when history really survives a redeploy. On Railway that means the storage
+// directory sits inside an attached volume. Setting DATA_DIR alone proves nothing: /data without a volume is
+// just more throwaway disk. Off Railway (your laptop, another host) an explicit DATA_DIR is trusted.
+const path = (p: string) => p.replace(/\/+$/, "");
+const PERSISTENT = ON_RAILWAY ? Boolean(MOUNT) && (DIR === path(MOUNT!) || DIR.startsWith(path(MOUNT!) + "/")) : Boolean(VOLUME);
+const WHY = PERSISTENT ? null
+  : ON_RAILWAY && !MOUNT ? "No Volume is attached to this service. Add one in Railway (mount path /data) and redeploy."
+  : ON_RAILWAY ? `DATA_DIR (${DIR}) is outside the attached volume (${MOUNT}). Unset DATA_DIR or point it inside the volume.`
+  : "Using local disk. Set DATA_DIR to keep history somewhere durable.";
 
 export class ChatError extends Error {
   constructor(public code: string, public status: number) { super(code); }
@@ -39,8 +50,8 @@ function load() {
   } catch (e) { lastSaveError = `could not read ${FILE}: ${(e as Error).message}`; }
 }
 load();
-console.log(`chat storage: ${FILE} (${VOLUME ? "persistent volume" : "local disk"}), loaded ${loadedMessages} messages in ${rooms.size} rooms`);
-if (ON_RAILWAY && !VOLUME) console.warn("WARNING: running on Railway without a Volume. Chat history is wiped on every deploy. Attach a Volume to this service.");
+console.log(`chat storage: ${FILE} (${PERSISTENT ? "persistent volume" : "throwaway disk"}), loaded ${loadedMessages} messages in ${rooms.size} rooms`);
+if (WHY && ON_RAILWAY) console.warn(`WARNING: chat history will NOT survive a deploy. ${WHY}`);
 
 /** Write to a temp file then rename, so a crash mid-write can never leave a half-written rooms.json. */
 function save() {
@@ -71,7 +82,8 @@ export function flush() {
 }
 
 export const storageInfo = () => ({
-  persistent: Boolean(VOLUME),
+  persistent: PERSISTENT,
+  ...(WHY ? { problem: WHY } : {}),
   dir: DIR,
   rooms: rooms.size,
   messages: [...rooms.values()].reduce((n, r) => n + r.msgs.length, 0),

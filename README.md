@@ -40,7 +40,7 @@ Load `dist/` at `chrome://extensions` (Developer mode, Load unpacked), then open
 ## Deploy the backend on Railway
 
 1. Create a Railway project from this GitHub repo and set the service **Root Directory** to `/server`. Railway builds with `npm run build` and starts with `npm start`; `server/railway.json` sets the health check.
-2. Add a **Volume** to the service, mounted at `/data`. This step is required: without it the disk is wiped on every deploy and chat history disappears. The server detects the volume on its own, and `/health` reports `"storage": {"persistent": true}` when it is working.
+2. Add a **Volume** to the service, mounted at `/data`. This step is required: without it the disk is wiped on every deploy and chat history disappears. The server detects the volume on its own, and `/health` reports `"storage": {"persistent": true}` only when history really survives a redeploy. If it says `false`, a `problem` field explains why (for example, no Volume attached to the service).
 3. Set variables (see `server/.env.example`):
 
 | Variable | Purpose |
