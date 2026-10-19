@@ -66,7 +66,7 @@ Until the extension is on the Chrome Web Store, people install the zip by hand t
 
 ## Landing page
 
-`landing/` is a static site with self-hosted fonts: set the Root Directory to `/landing` and leave build and install commands empty. It includes the alpha download, install steps and a light/dark toggle that remembers the visitor's choice. Before launch, set the absolute URL of `assets/og-image.png` in the `og:image` tag so link previews work.
+`landing/` is a static site with self-hosted fonts: set the Root Directory to `/landing` and leave build and install commands empty. It includes the alpha download, install steps and a light/dark toggle that remembers the visitor's choice. The link preview image is `assets/og-image-v2.png`, referenced by absolute URL in the `og:image` and `twitter:image` tags. Social sites cache preview images by URL, so when you change the image, give the file a new name (`-v3`) and update both tags, and copy it from `brand/web/og-image-1200x630.png`.
 
 ## Scripts
 
