@@ -3,11 +3,12 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { holderCount, holding, parseAddr } from "./chain.js";
 import { devAddresses } from "./launch.js";
-import { ChatError, poll, post, remove } from "./rooms.js";
+import { ChatError, flush, poll, post, remove, storageInfo } from "./rooms.js";
 
 const app = new Hono();
 app.use("*", cors());
-app.get("/health", (c) => c.json({ ok: true }));
+// Health stays 200 even if storage is unhealthy, so a bad disk never blocks a deploy. Read "storage" to see the truth.
+app.get("/health", (c) => c.json({ ok: true, storage: storageInfo() }));
 
 // Does this address hold this token, and how much.
 app.get("/holder", async (c) => {
@@ -67,3 +68,8 @@ app.delete("/rooms/:token/messages/:id", (c) => {
 const port = Number(process.env.PORT ?? 8787);
 serve({ fetch: app.fetch, port });
 console.log(`family server on :${port}`);
+
+// Railway sends SIGTERM on every redeploy. Save the last messages before exiting.
+for (const sig of ["SIGTERM", "SIGINT"] as const) {
+  process.on(sig, () => { flush(); process.exit(0); });
+}

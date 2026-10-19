@@ -40,19 +40,19 @@ Load `dist/` at `chrome://extensions` (Developer mode, Load unpacked), then open
 ## Deploy the backend on Railway
 
 1. Create a Railway project from this GitHub repo and set the service **Root Directory** to `/server`. Railway builds with `npm run build` and starts with `npm start`; `server/railway.json` sets the health check.
-2. Add a **Volume** to the service, mounted at `/data`.
+2. Add a **Volume** to the service, mounted at `/data`. This step is required: without it the disk is wiped on every deploy and chat history disappears. The server detects the volume on its own, and `/health` reports `"storage": {"persistent": true}` when it is working.
 3. Set variables (see `server/.env.example`):
 
 | Variable | Purpose |
 | --- | --- |
-| `DATA_DIR` | Set to `/data` so chat history lives on the volume |
 | `RPC_URL` | Robinhood Chain RPC. The public one is rate limited, use a provider key |
 | `ADMIN_KEY` | Enables moderator delete. Leave unset to disable |
 | `PONS_API` | Launchpad API for dev and bonding curve lookup (default `https://ponsfamily.com`) |
+| `DATA_DIR` | Optional. Overrides the storage location (defaults to the volume path) |
 
 4. Generate a public domain for the service and check `https://<domain>/health`.
 
-The chat store is a single JSON file, so run one instance only.
+The chat store is a single JSON file, written atomically and flushed on shutdown, so run one instance only. `server/railway.json` limits redeploys to changes under `/server`, so landing page and extension pushes no longer restart the server.
 
 ## Release the alpha
 
